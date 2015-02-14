@@ -19,15 +19,23 @@ using namespace Main;
 
 int p_base;
 int flag;
-int jflag;
 
 void read_memory() {
 	while (true) {
 		if (auto_lj_enabled || auto_sw_lj_enabled || bhop_enabled || strafe_hack_enabled) {
 			ReadProcessMemory(process, (LPVOID) (module_base + player_base), &p_base, sizeof(int), NULL);
 			ReadProcessMemory(process, (LPVOID) (p_base + mflags), &flag, sizeof(int), NULL);
-			ReadProcessMemory(process, (LPVOID)(module_base + jump_base), &jflag, sizeof(int), NULL);
+			ReadProcessMemory(process, (LPVOID)(module_base + jump_base), &player.jflag, sizeof(int), NULL);
 			/*ReadProcessMemory(process, (LPVOID)(module_base + jump_base_tf2), &jflag, sizeof(char), NULL);*/
+
+			if (player.jflag != 1) {
+				if (GetKeyState(VK_XBUTTON1) & 0x8000) {
+					Main::inair_override = 1;
+				}
+			}
+			if (GetKeyState(VK_SPACE) & 0x8000) {
+				Main::inair_override = 0;
+			}
 			Sleep(1);
 		} else {
 			Sleep(1);
@@ -40,7 +48,9 @@ void Player::start() {
 }
 
 bool Player::in_air() {
-	return jflag != 1;
+	if (Main::inair_override)
+		return false;
+	return player.jflag != 1;
 	/*return jflag == -1;*/
 }
 

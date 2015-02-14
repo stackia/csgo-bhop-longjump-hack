@@ -19,9 +19,11 @@ namespace Main {
 	extern DWORD mflags;
 	extern DWORD jump_base;
 	extern DWORD jump_base_tf2;
+	extern int inair_override;
 	extern bool auto_lj_enabled;
 	extern bool auto_sw_lj_enabled;
 	extern bool strafe_hack_enabled;
+	extern bool auto_strafe_hack_enabled;
 	extern POINT center;
 	extern POINT cursor_pos;
 	extern bool bhop_enabled;

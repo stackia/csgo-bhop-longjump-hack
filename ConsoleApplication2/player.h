@@ -5,6 +5,7 @@ class Player {
 	public:
 		bool in_air();
 		void start();
+		int jflag;
 };
 
 #endif

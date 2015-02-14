@@ -8,8 +8,9 @@ using namespace std;
 
 DWORD Main::player_base = 0x53BFC8;
 DWORD Main::mflags = 0x34C;
-DWORD Main::jump_base = 0xA7814C;
-DWORD Main::jump_base_tf2 = 0xC5C94C;
+DWORD Main::jump_base = 0xA7307C;
+DWORD Main::jump_base_tf2 = 0xC2B7CC;
+int Main::inair_override = 0;
 Player Main::player;
 Longjump Main::longjump;
 Bunnyhop Main::bhop;
@@ -21,10 +22,13 @@ HANDLE Main::process;
 bool Main::auto_lj_enabled;
 bool Main::auto_sw_lj_enabled;
 bool Main::strafe_hack_enabled;
+bool Main::auto_strafe_hack_enabled;
 POINT Main::center;
 POINT Main::cursor_pos;
 bool Main::bhop_enabled;
 bool Main::legit_bhop_enabled;
+
+HHOOK s_mouseHook;
 
 struct Config {
 	int width;
@@ -66,6 +70,27 @@ bool load_config(Config& cfg) {
 	}
 }
 
+LRESULT CALLBACK MouseCallback(int code, WPARAM wparam, LPARAM lparam) {
+	if (wparam == WM_MOUSEWHEEL) {
+		Main::inair_override = 0;
+	}
+	return CallNextHookEx(s_mouseHook, code, wparam, lparam);
+}
+
+void SetHook() {
+	s_mouseHook = SetWindowsHookEx(WH_MOUSE_LL, MouseCallback, NULL, 0);
+	if (s_mouseHook == NULL) {
+		printf("%d", GetLastError());
+	}
+	MSG message;
+	while (GetMessage(&message, NULL, 0, 0)) {
+		TranslateMessage(&message);
+		DispatchMessage(&message);
+	}
+	UnhookWindowsHookEx(s_mouseHook);
+}
+
+
 int main() {
 	Config config;
 	load_config(config);
@@ -79,6 +104,7 @@ int main() {
 	}
 	printf("%ls was found.\n", processname);
 	GetWindowThreadProcessId(window, &pid);
+	CreateThread(NULL, 0, (LPTHREAD_START_ROUTINE)SetHook, NULL, 0, NULL);
 	process = OpenProcess(PROCESS_ALL_ACCESS, 0, pid);
 	module_base = util.get_module_base_extern(pid, L"client.dll");
 	player.start();
@@ -91,6 +117,7 @@ int main() {
 			bhop_enabled = false;
 			legit_bhop_enabled = false;
 			strafe_hack_enabled = false;
+			auto_strafe_hack_enabled = false;
 		} else if (GetAsyncKeyState(VK_NUMPAD1)) {
 			auto_lj_enabled = true;
 			auto_sw_lj_enabled = false;
@@ -108,6 +135,14 @@ int main() {
 			auto_lj_enabled = false;
 			auto_sw_lj_enabled = false;
 			strafe_hack_enabled = true;
+			auto_strafe_hack_enabled = false;
+		} else if (GetAsyncKeyState(VK_NUMPAD6)) {
+			center.x = config.width / 2;
+			center.y = config.height / 2;
+			auto_lj_enabled = false;
+			auto_sw_lj_enabled = false;
+			strafe_hack_enabled = true;
+			auto_strafe_hack_enabled = true;
 		} else {
 			Sleep(1);
 		}

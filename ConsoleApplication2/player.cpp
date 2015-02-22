@@ -26,6 +26,7 @@ void read_memory() {
 			ReadProcessMemory(process, (LPVOID) (module_base + player_base), &p_base, sizeof(int), NULL);
 			ReadProcessMemory(process, (LPVOID) (p_base + mflags), &flag, sizeof(int), NULL);
 			ReadProcessMemory(process, (LPVOID)(module_base + jump_base), &player.jflag, sizeof(int), NULL);
+			//printf("%d", player.jflag);
 			/*ReadProcessMemory(process, (LPVOID)(module_base + jump_base_tf2), &jflag, sizeof(char), NULL);*/
 
 			if (player.jflag != 1) {
@@ -50,7 +51,7 @@ void Player::start() {
 bool Player::in_air() {
 	if (Main::inair_override)
 		return false;
-	return player.jflag != 1;
+	return player.jflag == -1;
 	/*return jflag == -1;*/
 }
 

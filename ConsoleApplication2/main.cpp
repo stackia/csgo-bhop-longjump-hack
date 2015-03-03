@@ -8,7 +8,7 @@ using namespace std;
 
 DWORD Main::player_base = 0x53BFC8;
 DWORD Main::mflags = 0x34C;
-DWORD Main::jump_base = 0x4A57C14;
+DWORD Main::jump_base = 0xA7502C;
 DWORD Main::jump_base_tf2 = 0xC2B7CC;
 int Main::inair_override = 0;
 Player Main::player;
@@ -23,6 +23,7 @@ bool Main::auto_lj_enabled;
 bool Main::auto_sw_lj_enabled;
 bool Main::strafe_hack_enabled;
 bool Main::auto_strafe_hack_enabled;
+bool Main::bhop_natural;
 POINT Main::center;
 POINT Main::cursor_pos;
 bool Main::bhop_enabled;
@@ -45,14 +46,16 @@ bool load_config(Config& cfg) {
 			if (getline(sin, key, '=')) {
 				if (key == "width") {
 					sin >> cfg.width;
-				} else if (key == "height") {
+				}
+				else if (key == "height") {
 					sin >> cfg.height;
 				}
 			}
 		}
 		fin.close();
 		return true;
-	} else {
+	}
+	else {
 		printf("Enter your in-game resolution width: ");
 		cin >> cfg.width;
 		printf("Enter your in-game resolution height: ");
@@ -63,7 +66,8 @@ bool load_config(Config& cfg) {
 			fout << "height=" << cfg.height << "\n";
 			fout.close();
 			return true;
-		} else {
+		}
+		else {
 			printf("Unabled to create config file.\n");
 			return false;
 		}
@@ -118,32 +122,43 @@ int main() {
 			legit_bhop_enabled = false;
 			strafe_hack_enabled = false;
 			auto_strafe_hack_enabled = false;
-		} else if (GetAsyncKeyState(VK_NUMPAD1)) {
+			bhop_natural = false;
+		}
+		else if (GetAsyncKeyState(VK_NUMPAD1)) {
 			auto_lj_enabled = true;
 			auto_sw_lj_enabled = false;
-		} else if (GetAsyncKeyState(VK_NUMPAD2)) {
+		}
+		else if (GetAsyncKeyState(VK_NUMPAD2)) {
 			auto_sw_lj_enabled = true;
 			auto_lj_enabled = false;
-		} else if (GetAsyncKeyState(VK_NUMPAD3)) {
+		}
+		else if (GetAsyncKeyState(VK_NUMPAD3)) {
 			bhop_enabled = true;
-		} else if (GetAsyncKeyState(VK_NUMPAD4)) {
+		}
+		else if (GetAsyncKeyState(VK_NUMPAD4)) {
 			bhop_enabled = true;
 			legit_bhop_enabled = true;
-		} else if (GetAsyncKeyState(VK_NUMPAD5)) {
+		}
+		else if (GetAsyncKeyState(VK_NUMPAD5)) {
 			center.x = config.width / 2;
 			center.y = config.height / 2;
 			auto_lj_enabled = false;
 			auto_sw_lj_enabled = false;
 			strafe_hack_enabled = true;
 			auto_strafe_hack_enabled = false;
-		} else if (GetAsyncKeyState(VK_NUMPAD6)) {
+		}
+		else if (GetAsyncKeyState(VK_NUMPAD6)) {
 			center.x = config.width / 2;
 			center.y = config.height / 2;
 			auto_lj_enabled = false;
 			auto_sw_lj_enabled = false;
 			strafe_hack_enabled = true;
 			auto_strafe_hack_enabled = true;
-		} else {
+		}
+		else if (GetAsyncKeyState(VK_NUMPAD7)) {
+			bhop_natural = true;
+		}
+		else {
 			Sleep(1);
 		}
 	}

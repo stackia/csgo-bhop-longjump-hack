@@ -51,7 +51,7 @@ void Player::start() {
 bool Player::in_air() {
 	if (Main::inair_override)
 		return false;
-	return player.jflag == -1;
+	return player.jflag != 1;
 	/*return jflag == -1;*/
 }
 

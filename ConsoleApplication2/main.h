@@ -24,6 +24,7 @@ namespace Main {
 	extern bool auto_sw_lj_enabled;
 	extern bool strafe_hack_enabled;
 	extern bool auto_strafe_hack_enabled;
+	extern bool bhop_natural;
 	extern POINT center;
 	extern POINT cursor_pos;
 	extern bool bhop_enabled;

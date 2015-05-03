@@ -8,7 +8,7 @@ using namespace std;
 
 DWORD Main::player_base = 0x53BFC8;
 DWORD Main::mflags = 0x34C;
-DWORD Main::jump_base = 0x4A5BE64;
+DWORD Main::jump_base = 0x4A34DD4;
 DWORD Main::jump_base_tf2 = 0xC2B7CC;
 int Main::inair_override = 0;
 Player Main::player;
